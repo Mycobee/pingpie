@@ -14,8 +14,8 @@ Currently, the notification mechanism uses Twilio, but PRs for other providers w
 ### Limitations
 
 - This script will not exit on failure. This is by design, as the goal is to not have your alerting system crash if possible. There is currently no way to know if the script is messing up, other than viewing your logs.
-- This script will run your checks in parallel, and sleep 30 seconds between every volley of checks. This timing is not exact, so if it takes 15 seconds for all checks to complete, the next round of checks will be 45 seconds from the original round. `Parallel` can only parallelize as many requests as your machine has CPU cores, so if you have 50 checks and 2 cores, this will take 25 requests. Basically, this shit dont scale. You need to add more cores or more processes on diff machines if you want to scale this and need to be closer to the 30 second mark per request volley.
-- This script uses bash and normal shell utilities, which come with their own limitations. This was chosen for portability reasons. Most Linux systems can run this script, and no need to distribute it via a compiled binary or different architectures. One day I might rewrite in Go, if I need to scale it. But for now, Bash it is!
+- This script will run your checks, the sleep 30 seconds before the next volley of checks. This timing is not exact, so if it takes 15 seconds for all checks to complete all your checks, the next round of checks will be 45 seconds from start the original round.
+- This script uses bash and normal shell utilities, which come with their own limitations. This was chosen for portability and simplicity reasons. Most Linux systems can run this script, and no need to distribute it via a compiled binary or different architectures. One day I might rewrite in Go, if I need to scale it. But for now, Bash it is!
 
 ### Gratitude
 
