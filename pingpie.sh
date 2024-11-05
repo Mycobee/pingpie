@@ -116,8 +116,8 @@ parse_config() {
 				echo "Error: Invalid alert structure detected."
 				exit 1
 			fi
-	    fail_counter["$name"]=0
-	    last_fired["$name"]=0
+			fail_counter["$name"]=0
+			last_fired["$name"]=0
 
 			echo "Alert:"
 			echo "  URL: $url"
@@ -133,52 +133,52 @@ parse_config() {
 perform_checks() {
 	first_alert=$(jq -c '.alerts[0].name' "$JSON_CONFIG")
 	while true; do
-    for alert in $(jq -c '.alerts[]' "$JSON_CONFIG"); do
-      url=$(echo "$alert" | jq -r '.url')
-	    name=$(echo "$alert" | jq -r '.name')
+		for alert in $(jq -c '.alerts[]' "$JSON_CONFIG"); do
+			url=$(echo "$alert" | jq -r '.url')
+			name=$(echo "$alert" | jq -r '.name')
 			allowed_fails=$(echo "$alert" | jq -r '.allowedFails')
-			if [[ "$name" ==  "${first_alert//\"/}" ]]; then
-	      sleep 30
+			if [[ "$name" == "${first_alert//\"/}" ]]; then
+				sleep 30
 			fi
 			check
-    done
-  done
+		done
+	done
 }
 
 check() {
-  response=$(curl -L --max-time 5 --write-out "%{http_code} %{url_effective}" --silent --output /dev/null "$url")
-  http_code=$(echo "$response" | awk '{print $1}')
-  final_url=$(echo "$response" | awk '{print $2}')
+	response=$(curl -L --max-time 5 --write-out "%{http_code} %{url_effective}" --silent --output /dev/null "$url")
+	http_code=$(echo "$response" | awk '{print $1}')
+	final_url=$(echo "$response" | awk '{print $2}')
 
-  if [[ "$http_code" =~ ^2 ]]; then
-  	echo "Check for $url returned a 2xx"
-	  fail_counter[$name]=0
-  else
-    echo "Error: Request to $url failed with HTTP status code $http_code."
-    ((fail_counter["$name"]++))
-  fi
+	if [[ "$http_code" =~ ^2 ]]; then
+		echo "Check for $url returned a 2xx"
+		fail_counter[$name]=0
+	else
+		echo "Error: Request to $url failed with HTTP status code $http_code."
+		((fail_counter["$name"]++))
+	fi
 
-  if [[ ${fail_counter[$name]} -gt $allowed_fails ]]; then
-    handle_alert
-  fi
+	if [[ ${fail_counter[$name]} -gt $allowed_fails ]]; then
+		handle_alert
+	fi
 }
 
 handle_alert() {
 	current_time=$(date +%s)
 	time_diff=$((current_time - last_fired[$name]))
 
-  if [[ "$time_diff" -gt 900 ]]; then
-    alert
-  fi
+	if [[ "$time_diff" -gt 900 ]]; then
+		alert
+	fi
 }
 
 alert() {
 	MESSAGE="Warning! Your alert for $name has failed! Please take action if necessary!"
 	curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$ACCOUNT_SID/Messages.json" \
-	  --data-urlencode "Body=$MESSAGE" \
-	  --data-urlencode "From=$FROM_PHONE" \
-	  --data-urlencode "To=$TO_PHONE" \
-	  -u "$ACCOUNT_SID:$AUTH_TOKEN"
+		--data-urlencode "Body=$MESSAGE" \
+		--data-urlencode "From=$FROM_PHONE" \
+		--data-urlencode "To=$TO_PHONE" \
+		-u "$ACCOUNT_SID:$AUTH_TOKEN"
 }
 
 main
