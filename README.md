@@ -1,6 +1,6 @@
 # About
 
-PingPie is a dead simple FOSS uptime monitoring tool for Linux systems. It integrates with Twilio to text when a system goes down. It is designed for hobbyists, small teams, and freelancers to have a nearly free uptime.com alternative that can run on a simple device such as a Raspberry Pi. It runs volleys of checks every 30ish seconds.
+PingPie is a dead simple FOSS uptime monitoring tool that can be used on Linux systems. It integrates with Twilio to text when a site goes down. It is designed for hobbyists, small teams, and freelancers to have a nearly free uptime.com alternative that can run on a simple device such as a Raspberry Pi. It runs volleys of checks every 30ish seconds.
 
 Currently, the notification mechanism uses Twilio, but PRs for other providers will be considered.
 
