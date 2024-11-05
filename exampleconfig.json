@@ -1,0 +1,14 @@
+{
+  "alerts": [
+    {
+      "url": "http://example.com",
+      "name": "example",
+      "allowedFails": 0
+    },
+    {
+      "url": "http://another-example.com",
+      "name": "another",
+      "allowedFails": 4
+    }
+  ]
+}
